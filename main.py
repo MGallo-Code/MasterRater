@@ -66,23 +66,17 @@ class Rating:
         # Update total rating with these new values
         self.calculate_total_rating()
 
-
-# List of stored ratings
-my_ratings = []
-
 # Get user input from options, options MUST be lowercase
 def get_input_from_options(prompt, options):
-    user_input = ""
     while user_input not in options:
         # Get user input
-        prompt += "(Enter " + ", ".join(options) + "):\n >> "
-        user_input = input(prompt).lower()
+        user_input = input(prompt + "\n>> ").lower()
     return user_input
 
 # Search for show or movie
 def search_for_content(api_manager):
     # Get user-selected content type
-    content_type = get_input_from_options("Would you like to search for a movie or a TV show?", ["m", "tv"])
+    content_type = get_input_from_options("Would you like to search for a movie or a TV show (Enter m or tv)?", ["m", "tv"])
     # Set to api-accepted content-type based on user options
     if content_type.lower() == "m":
         content_type = "movie"
@@ -91,54 +85,67 @@ def search_for_content(api_manager):
 
     # Get user input for search
     query = input(f"Search for {content_type}: ")
-    # Search based on 
+    # Search based on content type
     results = m.get_search(query, content_type)
+    results = results.json()["results"]
 
     # Get number of results
-    num_results = len(results.json()['total_results'])
+    num_results = len(results)
     print(f"{num_results} results found.")
 
+    # If results, display them
+    if num_results != 0 and content_type == "movie":
+        display_movie_results(api_manager, content_type, results)
+    if num_results != 0 and content_type == "tv":    
+        display_tv_results(api_manager, content_type, results)
+    # If no results, do nothing
 
-    if num_results != 0:
-        pass
-    
-    # If no results, return to top
+def display_movie_results(api_manager, content_type, results):
+    global my_movie_ratings
 
     # Handle movie search results
     # Display results
     print("Results:")
-    for i in range(len(results.json()['results'])):
+    for i, option in enumerate(results):
         if content_type == "movie":
-            print(f"{i+1}. {results.json()['results'][i]['title']}, {results.json()['results'][i]['release_date']}")
+            print(f"{i+1}. {option['title']}, {option['release_date']}")
         elif content_type == "tv":
-            print(f"{i+1}. {results.json()['results'][i]['name']}, {results.json()['results'][i]['first_air_date']}")
+            print(f"{i+1}. {option['name']}, {option['first_air_date']}")
 
     # Get user input
     selection = int(input("Enter the number of the show or movie you would like to rate: "))
-    selection = selection - 1
-    selection_id = results.json()['results'][selection]['id']
+    selected_movie = results[selection - 1]
 
+    # Display information for selected show or movie
+    print(f"Selected Movie:\n\
+          \tName: {selected_movie['title']}, {selected_movie['release_date']}\n\
+          \tOverview: {selected_movie['overview']}\n\
+          \tGlobal Rating: {selected_movie['vote_average']}\n")
     # Search for rating if it exists
     rating_exists = False
-    for rating in my_ratings:
-        print(f"Rating's ID: {rating.content_id}")
-        if selection_id == rating.content_id:
-            if content_type == "movie":
-                print(f"Movie: {results.json()['results'][i]['title']}, {results.json()['results'][i]['release_date']}")
-                print(rating)
-            elif content_type == "tv":
-                print(f"Show: {results.json()['results'][i]['name']}, {results.json()['results'][i]['first_air_date']}")
-                print(rating)
+    for rating_id in my_movie_ratings:
+        if selected_movie['id'] == my_movie_ratings[rating_id].content_id and content_type == "movie":
+            print("Your Ratings:")
+            print(rating)
             rating_exists = True
             break
     
-    # If rating doesn't exist, ask user to create it
+    # Ask user if they want to rate/rerate the movie or return to search
     if not rating_exists:
-        # If content is tv show, ask to rate show or select season
-        if content_type == "tv":
+        user_choice = get_input_from_options("What would you like to do?\n\
+                            \t1. Rate this movie\n\
+                            \t2. Select another movie", ['1', '2'])
+    else:
+        user_choice = get_input_from_options("What would you like to do?\n\
+                            \t1. Rate this movie again\n\
+                            \t2. Select another movie", ['1', '2'])
+        # If user wants to rerate, clear previous rating
 
+
+    # User wants to rate the movie.
+    if user_choice == '1':
         # Ask user for new ratings
-        rating = Rating(selection_id, content_type)
+        rating = Rating(selected_movie['id'], content_type)
         for category_key in rating.ratings:
             category = rating.ratings[category_key]
             # Ask user for rating
@@ -163,7 +170,14 @@ def search_for_content(api_manager):
             rating.calculate_total_rating()
             print(rating)
 
+def display_tv_results(api_manager, content_type, results):
+    if content_type == "tv":
+        print(f"Show: {results.json()['results'][1]['name']}, {results.json()['results'][i]['first_air_date']}")
+        rating = Rating(1, "tv")
+        print(rating)
 
+# List of stored ratings
+my_movie_ratings = []
 
 if __name__ == "__main__":
     m = APIManager()
