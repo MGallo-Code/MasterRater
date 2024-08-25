@@ -108,10 +108,7 @@ def display_movie_results(content_type, results):
     # Display results
     print("Results:")
     for i, option in enumerate(results):
-        if content_type == "movie":
-            print(f"{i+1}. {option['title']}, {option['release_date']}")
-        elif content_type == "tv":
-            print(f"{i+1}. {option['name']}, {option['first_air_date']}")
+        print(f"{i+1}. {option['title']}, {option['release_date']}")
 
     # Get user input
     selection = int(input("Enter the number of the show or movie you would like to rate:\n>> "))
@@ -169,13 +166,79 @@ def display_movie_results(content_type, results):
     # Otherwise, return to search
 
 def display_tv_results(api_manager, content_type, results):
-    if content_type == "tv":
-        print(f"Show: {results.json()['results'][1]['name']}, {results.json()['results'][i]['first_air_date']}")
-        rating = Rating(1, "tv")
+    global my_tv_ratings
+
+    # Display tv search results
+    print("Results:")
+    for i, option in enumerate(results):
+        print(f"{i+1}. {option['name']}, {option['first_air_date']}")
+
+    # Get user input
+    selection = int(input("Enter the number of the show or movie you would like to rate:\n>> "))
+    selected_show = results[selection - 1]
+
+    # Display information for selected show or movie
+    print(f"Selected TV Show:\n" +
+        f" {selected_show['name']}, {selected_show['first_air_date']}\n" +
+        f"  Overview: {selected_show['overview']}\n" +
+        f"  Global Rating: {selected_show['vote_average']}\n")
+    # Search for rating if it exists
+    rating_exists = False
+    # Check if rating with selection's id exists
+    if selected_show['id'] in my_tv_ratings:
+        rating_exists = True
+        rating = my_tv_ratings[selected_show['id']]
+        print("Your Ratings:")
         print(rating)
+    
+    # Ask user if they want to rate/rerate the movie or return to search
+    if not rating_exists:
+        user_choice = get_input_from_options("What would you like to do?\n" +
+                                             "  1. Rate this tv show\n" +
+                                             "  2. Select a season of this show to review\n" +
+                                             "  3. Select another movie or tv show", ['1', '2', '3'])
+    else:
+        user_choice = get_input_from_options("What would you like to do?\n" +
+                                             "  1. Rate this tv show again\n" +
+                                             "  2. Select a season of this show to review\n" +
+                                             "  3. Select another movie or tv show", ['1', '2', '3'])
+
+    # User wants to rate or re-rate the tv show.
+    if user_choice == '1':
+        # Ask user for new ratings
+        rating = Rating(selected_show['id'], content_type)
+        for category_key in rating.ratings:
+            category = rating.ratings[category_key]
+            # Ask user for rating
+            rating_value = input(f"{category[0]}: ")
+            # If user doesn't enter a rating, skip this category
+            if rating_value == '':
+                continue
+            else:
+                rating_value = float(rating_value)
+            # Ask user for weight
+            weight = input(f"{category[0]} weight (1x, 2x, etc., format as '1', '1.1', etc.): ")
+            # If user doesn't enter a weight, set it to 1
+            if weight == '':
+                weight = 1
+            else:
+                weight = float(weight)
+            # Update rating
+            rating.update_rating(category_key, rating_value, weight)
+        my_tv_ratings[selected_show['id']] = rating
+        print("<><><><> Your rating has been saved! <><><><>")
+        print(rating)
+    # User wants to select a season
+    elif user_choice == '2':
+        display_season_results(api_manager, content_type, selected_show, selected_show['number_of_seasons'])
+    # Otherwise, return to search
+
+def display_season_results(api_manager, content_type, show, num_seasons):
+    pass
 
 # List of stored ratings
 my_movie_ratings = {}
+my_tv_ratings = {}
 
 if __name__ == "__main__":
     m = APIManager()
