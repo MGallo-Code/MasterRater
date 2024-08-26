@@ -88,7 +88,6 @@ def search_for_content(api_manager):
     query = input(f"Search for {content_type}: ")
     # Search based on content type
     results = m.get_search(query, content_type)
-    results = results.json()["results"]
 
     # Get number of results
     num_results = len(results)
@@ -96,12 +95,12 @@ def search_for_content(api_manager):
 
     # If results, display them
     if num_results != 0 and content_type == "movie":
-        display_movie_results(content_type, results)
+        display_movie_results(results)
     if num_results != 0 and content_type == "tv":    
-        display_tv_results(api_manager, content_type, results)
+        display_tv_results(api_manager, results)
     # If no results, do nothing
 
-def display_movie_results(content_type, results):
+def display_movie_results(results):
     global my_movie_ratings
 
     # Handle movie search results
@@ -122,9 +121,10 @@ def display_movie_results(content_type, results):
     # Search for rating if it exists
     rating_exists = False
     # Check if rating with selection's id exists
-    if selected_movie['id'] in my_movie_ratings:
+    movie_id = selected_movie['id']
+    if movie_id in my_movie_ratings:
         rating_exists = True
-        rating = my_movie_ratings[selected_movie['id']]
+        rating = my_movie_ratings[movie_id]
         print("Your Ratings:")
         print(rating)
     
@@ -140,8 +140,13 @@ def display_movie_results(content_type, results):
 
     # User wants to rate the movie.
     if user_choice == '1':
+        # Load rating if it exists
+        rating = None
+        if rating_exists:
+            rating = my_movie_ratings[movie_id]
+        else:
+            rating = Rating(movie_id, 'movie')
         # Ask user for new ratings
-        rating = Rating(selected_movie['id'], content_type)
         for category_key in rating.ratings:
             category = rating.ratings[category_key]
             # Ask user for rating
@@ -160,12 +165,12 @@ def display_movie_results(content_type, results):
                 weight = float(weight)
             # Update rating
             rating.update_rating(category_key, rating_value, weight)
-        my_movie_ratings[selected_movie['id']] = rating
+        my_movie_ratings[movie_id] = rating
         print("<><><><> Your rating has been saved! <><><><>")
         print(rating)
     # Otherwise, return to search
 
-def display_tv_results(api_manager, content_type, results):
+def display_tv_results(api_manager, results):
     global my_tv_ratings
 
     # Display tv search results
@@ -177,17 +182,24 @@ def display_tv_results(api_manager, content_type, results):
     selection = int(input("Enter the number of the show or movie you would like to rate:\n>> "))
     selected_show = results[selection - 1]
 
+    # Display information for selected show
+    display_show_details(api_manager, str(selected_show['id']))
+
+def display_show_details(api_manager, show_id):
+    # Get details for selected show
+    selected_show = m.get_details(show_id, 'tv')
     # Display information for selected show or movie
     print(f"Selected TV Show:\n" +
         f" {selected_show['name']}, {selected_show['first_air_date']}\n" +
+        f"  {selected_show['number_of_seasons']} Seasons\n" +
         f"  Overview: {selected_show['overview']}\n" +
         f"  Global Rating: {selected_show['vote_average']}\n")
     # Search for rating if it exists
     rating_exists = False
     # Check if rating with selection's id exists
-    if selected_show['id'] in my_tv_ratings:
+    if show_id in my_tv_ratings:
         rating_exists = True
-        rating = my_tv_ratings[selected_show['id']]
+        rating = my_tv_ratings[show_id]
         print("Your Ratings:")
         print(rating)
     
@@ -205,8 +217,13 @@ def display_tv_results(api_manager, content_type, results):
 
     # User wants to rate or re-rate the tv show.
     if user_choice == '1':
+        # Load previous rating if it exists
+        rating = None
+        if rating_exists:
+            rating = my_tv_ratings[show_id]
+        else:
+            rating = Rating(show_id, 'tv')
         # Ask user for new ratings
-        rating = Rating(selected_show['id'], content_type)
         for category_key in rating.ratings:
             category = rating.ratings[category_key]
             # Ask user for rating
@@ -225,16 +242,203 @@ def display_tv_results(api_manager, content_type, results):
                 weight = float(weight)
             # Update rating
             rating.update_rating(category_key, rating_value, weight)
-        my_tv_ratings[selected_show['id']] = rating
+        my_tv_ratings[show_id] = rating
         print("<><><><> Your rating has been saved! <><><><>")
-        print(rating)
+        # Return to show_details screen to display new rating
+        display_show_details(api_manager, show_id)
     # User wants to select a season
     elif user_choice == '2':
-        display_season_results(api_manager, content_type, selected_show, selected_show['number_of_seasons'])
+        display_season_details(api_manager, selected_show)
     # Otherwise, return to search
 
-def display_season_results(api_manager, content_type, show, num_seasons):
-    pass
+def display_season_details(api_manager, show):
+    global my_tv_ratings
+
+    # Display season selection options
+    # Create list with possible user inputs (season numbers, or '' to return to search)
+    season_options = [str(i) for i in range(1, show['number_of_seasons'] + 1)]
+    season_options.append('')
+    # Get user choice
+    user_choice = get_input_from_options("Please select a season to review (1 - " + str(show['number_of_seasons']) + "),\n" +
+                                         " OR press Enter/Return to select another movie or tv show", season_options)
+
+    # Return to menu if season number is not provided
+    if user_choice == '':
+        return
+    # Only remaining options are integers representing season numbers...
+    selected_season = int(user_choice)
+
+    # Otherwise, get season information
+    season_details = api_manager.get_season_details(str(show['id']), selected_season)
+    # Display information for season
+    # Display information for season
+    print(f"Selected Season:\n" +
+        f" Season {season_details['season_number']}\n" +
+        f" Air Date: {season_details['air_date']}\n" +
+        f" Overview: {season_details['overview']}\n" +
+        f" Global Rating: {season_details['vote_average']}\n")
+
+    # Search for rating if it exists
+    rating_exists = False
+    # Check if rating with selection's id exists
+    rating_id = str(show['id']) + "-S" + str(selected_season)
+    if rating_id in my_tv_ratings:
+        rating_exists = True
+        rating = my_tv_ratings[rating_id]
+        print("Your Ratings:")
+        print(rating)
+    
+    # Ask user if they want to rate/rerate the movie or return to search
+    user_choice = None
+    if not rating_exists:
+        user_choice = get_input_from_options("What would you like to do?\n" +
+                                             "  1. Rate this season\n" +
+                                             "  2. Select an episode of this show to review\n" +
+                                             "  3. Select another season to review\n" +
+                                             "  4. Select another movie or tv show", ['1', '2', '3', '4'])
+    else:
+        user_choice = get_input_from_options("What would you like to do?\n" +
+                                             "  1. Rate this season again\n" +
+                                             "  2. Select an episode of this show to review\n" +
+                                             "  3. Select another season to review\n" +
+                                             "  4. Select another movie or tv show", ['1', '2', '3', '4'])
+
+    # User wants to rate or re-rate the tv show.
+    if user_choice == '1':
+        # Load previous rating if it exists
+        rating = None
+        if rating_exists:
+            rating = my_movie_ratings[rating_id]
+        else:
+            rating = Rating(rating_id, 'tv')
+        # Ask user for new ratings
+        for category_key in rating.ratings:
+            category = rating.ratings[category_key]
+            # Ask user for rating
+            rating_value = input(f"{category[0]}: ")
+            # If user doesn't enter a rating, skip this category
+            if rating_value == '':
+                continue
+            else:
+                rating_value = float(rating_value)
+            # Ask user for weight
+            weight = input(f"{category[0]} weight (1x, 2x, etc., format as '1', '1.1', etc.): ")
+            # If user doesn't enter a weight, set it to 1
+            if weight == '':
+                weight = 1
+            else:
+                weight = float(weight)
+            # Update rating
+            rating.update_rating(category_key, rating_value, weight)
+        my_tv_ratings[rating_id] = rating
+        print("<><><><> Your rating has been saved! <><><><>")
+        # Return to season_details menu to show rating
+        display_season_details(api_manager, show)
+    # User wants to select an episode
+    elif user_choice == '2':
+        display_episode_details(api_manager, show, selected_season)
+    # User wants to select another season
+    elif user_choice == '3':
+        display_season_details(api_manager, show)
+    # Otherwise, return to search
+
+def display_episode_details(api_manager, show, season_number):
+    global my_tv_ratings
+    
+    # Get season details including episodes
+    season_details = api_manager.get_season_details(str(show['id']), season_number)
+    
+    # Display episode selection options
+    print(f"Season {season_number} Episodes:")
+    for episode in season_details['episodes']:
+        print(f"{episode['episode_number']}. {episode['name']} (Air Date: {episode['air_date']})")
+    
+    # Get user input for episode selection
+    episode_number = int(input(f"Select an episode to review (1 - {len(season_details['episodes'])}):\n>> "))
+    
+    # Validate episode number
+    selected_episode = None
+    for episode in season_details['episodes']:
+        if episode['episode_number'] == episode_number:
+            selected_episode = episode
+            break
+    
+    if not selected_episode:
+        print("Invalid episode selection. Please try again.")
+        return
+    
+    # Display selected episode details
+    print(f"Selected Episode:\n" +
+          f" {selected_episode['name']}, {selected_episode['air_date']}\n" +
+          f" Overview: {selected_episode['overview']}\n" +
+          f" Global Rating: {selected_episode['vote_average']}\n")
+    
+    # Check if a rating for this episode already exists
+    episode_id = str(show['id']) + "-S" + str(season_number) + "-E" + str(episode_number)
+    rating_exists = False
+    if episode_id in my_tv_ratings:
+        rating_exists = True
+        rating = my_tv_ratings[episode_id]
+        print("Your Ratings:")
+        print(rating)
+    
+    # Ask user if they want to rate/rerate the episode or return to search
+    if not rating_exists:
+        user_choice = get_input_from_options("What would you like to do?\n" +
+                                             "  1. Rate this episode\n" +
+                                             "  2. Select another episode to review\n" +
+                                             "  3. Select another season to review\n" +
+                                             "  4. Select another movie or tv show", ['1', '2', '3', '4'])
+    else:
+        user_choice = get_input_from_options("What would you like to do?\n" +
+                                             "  1. Rate this episode again\n" +
+                                             "  2. Select another episode to review\n" +
+                                             "  3. Select another season to review\n" +
+                                             "  4. Select another movie or tv show", ['1', '2', '3', '4'])
+
+    # User wants to rate or re-rate the episode.
+    if user_choice == '1':
+        # Load previous rating if it exists
+        rating = None
+        if rating_exists:
+            rating = my_tv_ratings[episode_id]
+        else:
+            rating = Rating(episode_id, 'tv', season_number, episode_number)
+        
+        # Ask user for new ratings
+        for category_key in rating.ratings:
+            category = rating.ratings[category_key]
+            # Ask user for rating
+            rating_value = input(f"{category[0]}: ")
+            # If user doesn't enter a rating, skip this category
+            if rating_value == '':
+                continue
+            else:
+                rating_value = float(rating_value)
+            # Ask user for weight
+            weight = input(f"{category[0]} weight (1x, 2x, etc., format as '1', '1.1', etc.): ")
+            # If user doesn't enter a weight, set it to 1
+            if weight == '':
+                weight = 1
+            else:
+                weight = float(weight)
+            # Update rating
+            rating.update_rating(category_key, rating_value, weight)
+        
+        my_tv_ratings[episode_id] = rating
+        print("<><><><> Your rating has been saved! <><><><>")
+        # Return to show_details screen to display new rating
+        display_episode_details(api_manager, show, season_number)
+    
+    # User wants to select another episode
+    elif user_choice == '2':
+        display_episode_details(api_manager, show, season_number)
+    
+    # User wants to select another season
+    elif user_choice == '3':
+        display_season_details(api_manager, show)
+    
+    # Otherwise, return to search
 
 # List of stored ratings
 my_movie_ratings = {}
@@ -248,12 +452,16 @@ if __name__ == "__main__":
 
 
 # m = APIManager()
-# response = m.get_search("doctor who", "tv", 1)
+# # Get search results
+# results = m.get_search("doctor who", "tv", page=1)
 
-# print(response.json()['results'][0]['id'])
+# # Show first result
+# print(results[0]['id'])
 
-# response = m.get_details(57243, "tv")
-# number_of_seasons = response.json()["number_of_seasons"]
+# # Get details of show with id 57243
+# show_details = m.get_details(57243, 'tv')
+# # Get number of seasons of the show
+# number_of_seasons = show_details["number_of_seasons"]
 
-# response = m.get_season_details(57243, 6)
-# print(response.json()["episodes"][0].keys())
+# season_details = m.get_season_details(57243, 6)
+# print(season_details["episodes"][0].keys())

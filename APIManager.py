@@ -19,16 +19,16 @@ class APIManager:
     
     def get_search(self, query, query_type="movie", page=1):
         url = f"{self.base_url}search/{query_type}?query={requests.utils.quote(query)}&include_adult=true&language={self.language}&page={page}"
-        return requests.get(url, headers=self.headers)
+        return requests.get(url, headers=self.headers).json()['results']
     
     def get_details(self, id, content_type="multi"):
         url = f"{self.base_url}{content_type}/{id}?language={self.language}"
-        return requests.get(url, headers=self.headers)
+        return requests.get(url, headers=self.headers).json()
 
     def get_season_details(self, series_id, season_number):
         url = f"{self.base_url}tv/{series_id}/season/{season_number}?language={self.language}"
-        return requests.get(url, headers=self.headers)
+        return requests.get(url, headers=self.headers).json()
 
     def get_episode_details(self, series_id, season_number, episode_number):
         url = f"{self.base_url}tv/{series_id}/season/{season_number}/episode/{episode_number}?language={self.language}"
-        return requests.get(url, headers=self.headers)
+        return requests.get(url, headers=self.headers).json()
