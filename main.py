@@ -1,5 +1,14 @@
+import numpy as np
 from Rating import Rating
 from APIManager import APIManager
+
+# Import ratings from file
+def import_ratings(in_file):
+    return np.load(in_file, allow_pickle=True).item()
+
+# Save ratings to file
+def save_ratings(ratings, out_file):
+    np.save(out_file, ratings, allow_pickle=True)
 
 # Get user input from options, options MUST be lowercase
 def get_input_from_options(prompt, options):
@@ -378,6 +387,8 @@ def display_episode_details(api_manager, show, season_number):
 # List of stored ratings
 my_movie_ratings = {}
 my_tv_ratings = {}
+
+RATINGS_FILE = "./data/saved_ratings"
 
 if __name__ == "__main__":
     m = APIManager()
