@@ -60,3 +60,12 @@ class Rating:
             self.ratings[category][2] = weight
         # Recalculate total rating with new values
         self.calculate_total_rating()
+
+    def save(self, manager):
+        # Save the current rating using the provided RatingManager.
+        manager.add_or_update_rating(self)
+
+    @classmethod
+    def load(cls, content_id, manager):
+        # Load a rating by content ID using the provided RatingManager.
+        return manager.get_rating(content_id)
