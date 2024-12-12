@@ -1,9 +1,11 @@
 from PyQt6.QtWidgets import QMainWindow, QStackedWidget, QHBoxLayout, QVBoxLayout, QWidget, QPushButton
+from PyQt6.QtWidgets import QWidget, QPushButton, QHBoxLayout
 from PyQt6.QtCore import Qt
 from gui.HomePage import HomePage
 from gui.SearchPage import SearchPage
 from gui.MoviePage import MoviePage
 from gui.TVShowPage import TVShowPage
+from utils.APIManager import APIManager
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -11,10 +13,13 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Movie and TV Rating App")
         self.resize(800, 600)
 
+        # Initialize Rating API Manager
+        self.api_manager = APIManager()
+
         # Stacked widget to switch between pages
         self.stacked_widget = QStackedWidget()
-        
-        # Initialize pages
+
+        # Initialize pages (assuming these classes are defined elsewhere)
         self.home_page = HomePage(self)
         self.search_page = SearchPage(self)
         self.movie_page = MoviePage(self)
@@ -28,7 +33,10 @@ class MainWindow(QMainWindow):
 
         # Set up main layout
         main_layout = QVBoxLayout()
-        main_layout.addWidget(self.create_navigation_bar())
+        
+        # Wrap navigation bar in a QWidget
+        nav_widget = self.create_navigation_bar()  # returns a QWidget
+        main_layout.addWidget(nav_widget)
         main_layout.addWidget(self.stacked_widget)
 
         # Set the central widget
@@ -40,7 +48,6 @@ class MainWindow(QMainWindow):
         self.stacked_widget.setCurrentWidget(self.home_page)
 
     def create_navigation_bar(self):
-        # Navigation buttons
         nav_bar = QHBoxLayout()
         home_button = QPushButton("Home")
         home_button.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.home_page))
@@ -51,8 +58,11 @@ class MainWindow(QMainWindow):
         ratings_button = QPushButton("View Ratings")
         ratings_button.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(ViewRatingsPage(self)))
 
-        # Add buttons to navigation bar
         nav_bar.addWidget(home_button)
         nav_bar.addWidget(search_button)
         nav_bar.addWidget(ratings_button)
-        return nav_bar
+        
+        # Wrap QHBoxLayout in a QWidget
+        nav_widget = QWidget()
+        nav_widget.setLayout(nav_bar)
+        return nav_widget

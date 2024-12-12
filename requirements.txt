@@ -2,12 +2,12 @@ certifi==2024.8.30
 charset-normalizer==3.4.0
 click==8.1.7
 idna==3.10
-numpy==2.1.2
+numpy==2.2.0
 PyQt6==6.4.2
 pyqt6-plugins==6.4.2.2.3
 PyQt6-Qt6==6.4.3
 pyqt6-tools==6.4.2.3.3
-PyQt6_sip==13.8.0
+PyQt6_sip==13.9.1
 python-dotenv==1.0.1
 qt6-applications==6.4.3.2.3
 qt6-tools==6.4.3.1.3
