@@ -1,3 +1,5 @@
+# ratings/RatingManager.py
+
 import numpy as np
 
 class RatingManager:

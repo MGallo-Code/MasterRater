@@ -1,10 +1,12 @@
+# gui/App.py
+
 import sys
 from gui.MainWindow import MainWindow
-from PyQt6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication
 
 class App:
     def __init__(self):
-        self.app = QApplication(sys.argv)
+        self.app = QApplication([])
         self.window = MainWindow()
 
     def run(self):

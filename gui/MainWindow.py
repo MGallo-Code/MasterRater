@@ -1,6 +1,7 @@
-from PyQt6.QtWidgets import QMainWindow, QStackedWidget, QHBoxLayout, QVBoxLayout, QWidget, QPushButton
-from PyQt6.QtWidgets import QWidget, QPushButton, QHBoxLayout
-from PyQt6.QtCore import Qt
+# gui/MainWindow.py
+from PySide6.QtWidgets import QMainWindow, QStackedWidget, QHBoxLayout, QVBoxLayout, QWidget, QPushButton
+from PySide6.QtWidgets import QWidget, QPushButton, QHBoxLayout
+from PySide6.QtCore import Qt
 from gui.HomePage import HomePage
 from gui.SearchPage import SearchPage
 from gui.MoviePage import MoviePage
@@ -10,7 +11,7 @@ from utils.APIManager import APIManager
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Movie and TV Rating App")
+        self.setWindowTitle("Master Rater")
         self.resize(800, 600)
 
         # Initialize Rating API Manager
@@ -19,7 +20,7 @@ class MainWindow(QMainWindow):
         # Stacked widget to switch between pages
         self.stacked_widget = QStackedWidget()
 
-        # Initialize pages (assuming these classes are defined elsewhere)
+        # Initialize pages
         self.home_page = HomePage(self)
         self.search_page = SearchPage(self)
         self.movie_page = MoviePage(self)

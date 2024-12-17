@@ -1,5 +1,7 @@
-from PyQt6.QtWidgets import QMainWindow, QStackedWidget, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QComboBox, QLineEdit, QLabel
-from PyQt6.QtCore import Qt
+# gui/SearchPage.py
+
+from PySide6.QtWidgets import QMainWindow, QStackedWidget, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QComboBox, QLineEdit, QLabel
+from PySide6.QtCore import Qt
 
 class SearchPage(QWidget):
     def __init__(self, main_window):
@@ -23,7 +25,7 @@ class SearchPage(QWidget):
 
     def perform_search(self):
         # Perform the API search here
-        content_type = self.type_selector.currentText().lower()
+        content_type = 'movie' if self.type_selector.currentText().lower() == 'movie' else 'tv'
         query = self.search_input.text()
         results = self.main_window.api_manager.get_search(query, content_type)
 

@@ -1,3 +1,5 @@
+# ratings/rating.py
+
 class Rating:
     def __init__(self, content_id, content_type="movie", season_number=None, episode_number=None):
         # Represents show or movie ID in string format

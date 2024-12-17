@@ -1,6 +1,8 @@
+# legacy/legacy_ratings.py
+
 import numpy as np
 from ratings.Rating import Rating
-from APIManager import APIManager
+from utils.APIManager import APIManager
 
 # Import ratings from file
 def import_ratings(in_file):

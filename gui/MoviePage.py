@@ -1,5 +1,7 @@
-from PyQt6.QtWidgets import QMainWindow, QStackedWidget, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QLabel
-from PyQt6.QtCore import Qt
+# gui/MoviePage.py
+
+from PySide6.QtWidgets import QMainWindow, QStackedWidget, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QLabel
+from PySide6.QtCore import Qt
 
 class MoviePage(QWidget):
     def __init__(self, main_window):

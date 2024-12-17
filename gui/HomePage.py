@@ -1,5 +1,7 @@
-from PyQt6.QtWidgets import QMainWindow, QStackedWidget, QHBoxLayout, QVBoxLayout, QWidget, QPushButton
-from PyQt6.QtCore import Qt
+# gui/HomePage.py
+
+from PySide6.QtWidgets import QMainWindow, QStackedWidget, QHBoxLayout, QVBoxLayout, QWidget, QPushButton
+from PySide6.QtCore import Qt
 
 class HomePage(QWidget):
     def __init__(self, main_window):
