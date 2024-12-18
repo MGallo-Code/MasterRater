@@ -13,6 +13,7 @@ class EpisodeDetailsPage(QWidget):
         layout = QVBoxLayout()
 
         # Episode details
+        show_name = self.show.get('name', 'Unknown Name')
         ep_num = episode.get('episode_number', '?')
         name = episode.get('name', 'Unknown Episode')
         air_date = episode.get('air_date', 'Unknown Date')
@@ -20,9 +21,11 @@ class EpisodeDetailsPage(QWidget):
         rating = episode.get('vote_average', 'No rating available.')
 
         # Title
+        show_label = QLabel(f"<h1>{show_name}</h1>")
+        layout.addWidget(show_label)
+
         episode_label = QLabel(f"Episode {ep_num}: {name}")
         episode_label.setWordWrap(True)
-        episode_label.setStyleSheet("font-size: 16px; font-weight: bold;")
         layout.addWidget(episode_label)
 
         # Scrollable area for long overviews
@@ -33,7 +36,7 @@ class EpisodeDetailsPage(QWidget):
         overview_scroll = QScrollArea()
         overview_scroll.setWidget(overview_label)
         overview_scroll.setWidgetResizable(True)
-        overview_scroll.setFixedHeight(150)  # Limit visible height
+        overview_scroll.setFixedHeight(150)
         layout.addWidget(overview_scroll)
 
         # Air Date

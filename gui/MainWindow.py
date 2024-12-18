@@ -5,6 +5,7 @@ from gui.NavigationController import NavigationController
 from gui.HomePage import HomePage
 from gui.ResultsPage import ResultsPage
 from utils.APIManager import APIManager
+from utils.load_stylesheet import load_stylesheet
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -18,10 +19,14 @@ class MainWindow(QMainWindow):
 
         # Set up main layout
         main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
 
         # Create the navigation bar
         nav_widget = self.create_navigation_bar()
+        nav_widget.setObjectName("NavBar")
         nav_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        load_stylesheet(nav_widget, 'gui/static/styles_nav.qss')
         main_layout.addWidget(nav_widget)
 
         # Create the content area
@@ -29,6 +34,8 @@ class MainWindow(QMainWindow):
         self.content_layout = QVBoxLayout()
         self.content_layout.setContentsMargins(0, 0, 0, 0)
         self.content_area.setLayout(self.content_layout)
+        load_stylesheet(self.content_area, 'gui/static/styles_content_area.qss')
+
 
         # Add the content area to the main layout
         main_layout.addWidget(self.content_area)
