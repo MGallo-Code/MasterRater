@@ -1,5 +1,5 @@
 # gui/MainWindow.py
-from PySide6.QtWidgets import QMainWindow, QComboBox, QLineEdit, QHBoxLayout, QVBoxLayout, QWidget, QPushButton
+from PySide6.QtWidgets import QMainWindow, QComboBox, QLineEdit, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QSizePolicy
 from PySide6.QtCore import Qt
 from gui.NavigationController import NavigationController
 from gui.HomePage import HomePage
@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
 
         # Create the navigation bar
         nav_widget = self.create_navigation_bar()
+        nav_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         main_layout.addWidget(nav_widget)
 
         # Create the content area
@@ -31,6 +32,7 @@ class MainWindow(QMainWindow):
 
         # Add the content area to the main layout
         main_layout.addWidget(self.content_area)
+        main_layout.setStretch(1, 1)
 
         # Set the central widget
         central_widget = QWidget()

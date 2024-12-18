@@ -19,15 +19,15 @@ class EpisodeDetailsPage(QWidget):
         overview = episode.get('overview', 'No overview available.')
         rating = episode.get('vote_average', 'No rating available.')
 
-        # Title (long titles get wrapped)
+        # Title
         episode_label = QLabel(f"Episode {ep_num}: {name}")
-        episode_label.setWordWrap(True)  # Wraps long titles
+        episode_label.setWordWrap(True)
         episode_label.setStyleSheet("font-size: 16px; font-weight: bold;")
         layout.addWidget(episode_label)
 
         # Scrollable area for long overviews
-        overview_label = QLabel(f"Overview: {overview}")
-        overview_label.setWordWrap(True)  # Wraps text
+        overview_label = QLabel(f"{overview}")
+        overview_label.setWordWrap(True)
         overview_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
 
         overview_scroll = QScrollArea()

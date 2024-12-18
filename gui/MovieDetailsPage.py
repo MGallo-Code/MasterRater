@@ -1,7 +1,7 @@
 # gui/DetailsPage.py
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSizePolicy
 
-class DetailsPage(QWidget):
+class MovieDetailsPage(QWidget):
     def __init__(self, navigation_controller, api_manager, content, is_movie):
         super().__init__()
         self.nav = navigation_controller

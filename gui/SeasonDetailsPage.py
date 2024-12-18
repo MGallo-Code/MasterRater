@@ -1,6 +1,7 @@
 # gui/SeasonDetailsPage.py
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea, QSizePolicy, QFrame
 from PySide6.QtCore import Qt
+from gui.EpisodeDetailsPage import EpisodeDetailsPage
 
 class SeasonDetailsPage(QWidget):
     def __init__(self, navigation_controller, api_manager, show, season_details):
@@ -14,11 +15,14 @@ class SeasonDetailsPage(QWidget):
         layout = QVBoxLayout()
 
         # Extract season details
+        name = show.get('name', 'Unknown Name')
         season_num = season_details.get('season_number', '?')
         air_date = season_details.get('air_date', 'Unknown Date')
         overview = season_details.get('overview', 'No overview available.')
 
         # Header Section
+        show_label = QLabel(f"<h1>{name}</h1>")
+        layout.addWidget(show_label)
         header_label = QLabel(f"<h2>Season {season_num}</h2>")
         header_label.setAlignment(Qt.AlignCenter)
         layout.addWidget(header_label)
@@ -36,7 +40,7 @@ class SeasonDetailsPage(QWidget):
         overview_scroll = QScrollArea()
         overview_scroll.setWidget(overview_label)
         overview_scroll.setWidgetResizable(True)
-        overview_scroll.setFixedHeight(100)  # Limit height for long overviews
+        overview_scroll.setFixedHeight(100)
         layout.addWidget(overview_scroll)
 
         # Episodes Section
@@ -92,6 +96,5 @@ class SeasonDetailsPage(QWidget):
 
     def view_episode(self, episode):
         """Navigate to the EpisodeDetailsPage for the selected episode."""
-        from gui.EpisodeDetailsPage import EpisodeDetailsPage
         episode_page = EpisodeDetailsPage(self.nav, self.api_manager, self.show, episode)
         self.nav.push(episode_page)

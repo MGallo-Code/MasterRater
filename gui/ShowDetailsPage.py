@@ -1,6 +1,6 @@
 # gui/ShowDetailsPage.py
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea, QSizePolicy
-from PySide6.QtCore import Qt
+from gui.SeasonDetailsPage import SeasonDetailsPage
 
 class ShowDetailsPage(QWidget):
     def __init__(self, navigation_controller, api_manager, show):
@@ -25,19 +25,19 @@ class ShowDetailsPage(QWidget):
         layout.addWidget(QLabel(f"Rating: {rating}"))
 
         # Overview with word wrapping in a scrollable area
-        overview_label = QLabel(f"Overview: {overview}")
+        overview_label = QLabel(f"{overview}")
         overview_label.setWordWrap(True)
         overview_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
 
         overview_scroll = QScrollArea()
         overview_scroll.setWidget(overview_label)
         overview_scroll.setWidgetResizable(True)
-        overview_scroll.setFixedHeight(100)  # Limit overview height
+        overview_scroll.setFixedHeight(100)
         layout.addWidget(overview_scroll)
 
         # Seasons Section
         if num_seasons > 0:
-            layout.addWidget(QLabel("<b>Seasons:</b>"))  # Section header
+            layout.addWidget(QLabel("<b>Seasons:</b>"))
 
             # Scrollable area for seasons
             scroll_area = QScrollArea()
@@ -52,7 +52,8 @@ class ShowDetailsPage(QWidget):
                 season_btn.clicked.connect(self._create_view_season_handler(season_number))
                 scroll_layout.addWidget(season_btn)
 
-            scroll_layout.addStretch()  # Add spacing
+            # Add spacing
+            scroll_layout.addStretch()
             scroll_content.setLayout(scroll_layout)
             scroll_area.setWidget(scroll_content)
             layout.addWidget(scroll_area)
@@ -71,7 +72,6 @@ class ShowDetailsPage(QWidget):
     def view_season(self, season_number):
         """Fetch season details and navigate to SeasonDetailsPage."""
         season_details = self.api_manager.get_season_details(str(self.show['id']), season_number)
-        from gui.SeasonDetailsPage import SeasonDetailsPage
         season_details_page = SeasonDetailsPage(self.nav, self.api_manager, self.show, season_details)
         self.nav.push(season_details_page)
 
