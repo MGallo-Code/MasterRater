@@ -3,10 +3,11 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScroll
 from gui.MainContent.SeasonDetailsPage import SeasonDetailsPage
 
 class ShowDetailsPage(QWidget):
-    def __init__(self, navigation_controller, api_manager, show):
+    def __init__(self, navigation_controller, api_manager, rating_manager, show):
         super().__init__()
         self.nav = navigation_controller
         self.api_manager = api_manager
+        self.rating_manager = rating_manager
         self.show = show
 
         # Main layout
@@ -72,7 +73,7 @@ class ShowDetailsPage(QWidget):
     def view_season(self, season_number):
         """Fetch season details and navigate to SeasonDetailsPage."""
         season_details = self.api_manager.get_season_details(str(self.show['id']), season_number)
-        season_details_page = SeasonDetailsPage(self.nav, self.api_manager, self.show, season_details)
+        season_details_page = SeasonDetailsPage(self.nav, self.api_manager, self.rating_manager, self.show, season_details)
         self.nav.push(season_details_page)
 
     def open_rating_dialog(self):

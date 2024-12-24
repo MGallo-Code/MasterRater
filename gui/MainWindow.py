@@ -4,6 +4,7 @@ from PySide6.QtCore import Qt
 from gui.NavigationController import NavigationController
 from gui.MainContent.HomePage import HomePage
 from gui.MainContent.ResultsPage import ResultsPage
+from ratings.RatingManager import RatingManager
 from utils.APIManager import APIManager
 from utils.load_stylesheet import load_stylesheet
 
@@ -15,6 +16,7 @@ class MainWindow(QMainWindow):
 
         # Initialize Rating API Manager and Navigation Controller
         self.api_manager = APIManager()
+        self.rating_manager = RatingManager()
         self.nav_controller = NavigationController()
 
         # Set up main layout
@@ -74,6 +76,7 @@ class MainWindow(QMainWindow):
         # Search Field
         self.search_field = QLineEdit()
         self.search_field.setPlaceholderText("Search...")
+        self.search_field.returnPressed.connect(self.perform_search)
         nav_bar.addWidget(self.search_field)
 
         # Search Button
@@ -108,7 +111,7 @@ class MainWindow(QMainWindow):
         is_movie = (self.type_selector.currentText().lower() == "movie")
         content_type = 'movie' if is_movie else 'tv'
         results = self.api_manager.get_search(query, content_type)
-        results_page = ResultsPage(self.nav_controller, self.api_manager, results, is_movie)
+        results_page = ResultsPage(self.nav_controller, self.api_manager, self.rating_manager, results, is_movie)
         self.nav_controller.push(results_page)
         self.update_navigation_buttons()
 

@@ -4,10 +4,11 @@ from PySide6.QtCore import Qt
 from gui.MainContent.EpisodeDetailsPage import EpisodeDetailsPage
 
 class SeasonDetailsPage(QWidget):
-    def __init__(self, navigation_controller, api_manager, show, season_details):
+    def __init__(self, navigation_controller, api_manager, rating_manager, show, season_details):
         super().__init__()
         self.nav = navigation_controller
         self.api_manager = api_manager
+        self.rating_manager = rating_manager
         self.show = show
         self.season_details = season_details
 
@@ -102,7 +103,7 @@ class SeasonDetailsPage(QWidget):
 
     def view_episode(self, episode):
         """Navigate to the EpisodeDetailsPage for the selected episode."""
-        episode_page = EpisodeDetailsPage(self.nav, self.api_manager, self.show, episode)
+        episode_page = EpisodeDetailsPage(self.nav, self.api_manager, self.rating_manager, self.show, episode)
         self.nav.push(episode_page)
     
     def open_rating_dialog(self):

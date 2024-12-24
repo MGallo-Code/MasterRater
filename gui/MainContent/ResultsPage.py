@@ -1,11 +1,14 @@
 # gui/MainContent/ResultsPage.py
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea
+from gui.MainContent.MovieDetailsPage import MovieDetailsPage
+from gui.MainContent.ShowDetailsPage import ShowDetailsPage
 
 class ResultsPage(QWidget):
-    def __init__(self, navigation_controller, api_manager, results, is_movie):
+    def __init__(self, navigation_controller, api_manager, rating_manager, results, is_movie):
         super().__init__()
         self.nav = navigation_controller
         self.api_manager = api_manager
+        self.rating_manager = rating_manager
         self.results = results
         self.is_movie = is_movie
 
@@ -39,13 +42,11 @@ class ResultsPage(QWidget):
         self.setLayout(main_layout)
 
     def show_movie_details(self, movie):
-        from gui.MainContent.MovieDetailsPage import MovieDetailsPage
-        movie_details_page = MovieDetailsPage(self.nav, self.api_manager, movie)
+        movie_details_page = MovieDetailsPage(self.nav, self.api_manager, self.rating_manager, movie)
         self.nav.push(movie_details_page)
 
     def show_tv_details(self, tv_show):
-        from gui.MainContent.ShowDetailsPage import ShowDetailsPage
         show_id = tv_show.get('id')
         detailed_show = self.api_manager.get_details(show_id, 'tv')
-        show_details_page = ShowDetailsPage(self.nav, self.api_manager, detailed_show)
+        show_details_page = ShowDetailsPage(self.nav, self.api_manager, self.rating_manager, detailed_show)
         self.nav.push(show_details_page)
