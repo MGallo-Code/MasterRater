@@ -2,7 +2,7 @@
 
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton, QFormLayout
 from PySide6.QtCore import Qt
-from ratings.BaseRatingStrategy import MixedRatingStrategy
+from ratings.MixedRatingStrategy import MixedRatingStrategy
 
 class MixedRatingDialog(QDialog):
     def __init__(self, parent, rating_manager, content_id, content_type="movie"):
@@ -10,20 +10,23 @@ class MixedRatingDialog(QDialog):
         self.setWindowTitle(f"Rate {content_type.title()}")
         self.rating_manager = rating_manager
         self.content_id = content_id
+        self.content_type = content_type
 
-        # Create a strategy instance and load data
-        self.strategy = MixedRatingStrategy(content_id)
+        # Create a strategy, pass the pre-formatted content_id
+        self.strategy = MixedRatingStrategy(content_id, content_type)
         self.strategy.load_rating(rating_manager)
 
         main_layout = QVBoxLayout()
 
+        # Single rating
         main_layout.addWidget(QLabel("<h3>Single Numeric Rating (Optional)</h3>", alignment=Qt.AlignLeft))
         self.one_score_edit = QLineEdit()
         if self.strategy.one_score is not None:
             self.one_score_edit.setText(str(self.strategy.one_score))
-        self.one_score_edit.setPlaceholderText("Enter a single rating, e.g. 8.5")
+        self.one_score_edit.setPlaceholderText("Enter a single rating (like 8.5)")
         main_layout.addWidget(self.one_score_edit)
 
+        # Category fields
         main_layout.addWidget(QLabel("<h3>Category Ratings (Optional)</h3>"))
         self.category_edits = {}
         self.form_layout = QFormLayout()
@@ -37,7 +40,7 @@ class MixedRatingDialog(QDialog):
             self.form_layout.addRow(QLabel(label), edit)
         main_layout.addLayout(self.form_layout)
 
-        # Save / Cancel
+        # Buttons
         save_button = QPushButton("Save")
         save_button.clicked.connect(self.on_save)
         main_layout.addWidget(save_button)
@@ -59,18 +62,16 @@ class MixedRatingDialog(QDialog):
         else:
             self.strategy.one_score = None
 
-        # Category ratings
+        # Categories
         for cat_key, edit in self.category_edits.items():
             val = edit.text().strip()
             if val:
                 try:
-                    rating_val = float(val)
-                    self.strategy.categories[cat_key][1] = rating_val
+                    self.strategy.categories[cat_key][1] = float(val)
                 except ValueError:
                     pass
             else:
                 self.strategy.categories[cat_key][1] = None
 
-        # Save
         self.strategy.save_rating(self.rating_manager)
         self.accept()

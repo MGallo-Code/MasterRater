@@ -1,4 +1,5 @@
 # ratings/RatingManager.py
+
 import numpy as np
 
 class RatingManager:
@@ -21,22 +22,13 @@ class RatingManager:
         np.save(self.file_path, self.rating_data_store, allow_pickle=True)
 
     def get_rating_data(self, content_id):
-        """
-        Return the raw dictionary for this content_id, or None if not found.
-        """
         return self.rating_data_store.get(content_id)
 
     def save_rating_data(self, content_id, data_dict):
-        """
-        Save/update the dictionary for this content_id, then persist.
-        """
         self.rating_data_store[content_id] = data_dict
         self._save_data()
 
     def delete_rating_data(self, content_id):
-        """
-        Remove the rating dictionary for content_id if it exists, and persist changes.
-        """
         if content_id in self.rating_data_store:
             del self.rating_data_store[content_id]
             self._save_data()

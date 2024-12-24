@@ -28,7 +28,7 @@ class MovieDetailsPage(QWidget):
         layout.addWidget(QLabel(f"Release Date: {date}"))
 
         # Overview
-        overview_label = QLabel(f"Overview: {overview}")
+        overview_label = QLabel(f"{overview}")
         overview_label.setWordWrap(True)
         overview_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         layout.addWidget(overview_label)
@@ -36,12 +36,11 @@ class MovieDetailsPage(QWidget):
         layout.addWidget(QLabel(f"TMDB Global Rating: {global_rating}"))
 
         # Insert reusable rating widget
-        content_id = str(movie.get('id'))
+        content_id = f"movie:{movie.get('id')}"
         rating_widget = RatingWidget(
             parent=self,
             rating_manager=rating_manager,
             content_id=content_id,
-            content_type="movie",
             title_text="Rate this Movie"
         )
         layout.addWidget(rating_widget)

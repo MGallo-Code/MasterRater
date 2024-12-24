@@ -41,7 +41,7 @@ class EpisodeDetailsPage(QWidget):
         overview_scroll = QScrollArea()
         overview_scroll.setWidget(overview_label)
         overview_scroll.setWidgetResizable(True)
-        overview_scroll.setFixedHeight(150)
+        overview_scroll.setFixedHeight(80)
         layout.addWidget(overview_scroll)
 
         # Air Date
@@ -51,13 +51,12 @@ class EpisodeDetailsPage(QWidget):
         layout.addWidget(QLabel(f"Global Rating: {global_rating}"))
 
         # Insert the reusable rating widget here
-        content_id = f"{show.get('id')}-S{episode.get('season_number')}-E{ep_num}"
+        content_id = f"tv:{show.get('id')}-S{episode.get('season_number')}-E{ep_num}"
         # Or whichever ID scheme you use for episodes
         rating_widget = RatingWidget(
             parent=self,
             rating_manager=rating_manager,
             content_id=content_id,
-            content_type="tv",
             title_text="Rate this Episode"
         )
         layout.addWidget(rating_widget)

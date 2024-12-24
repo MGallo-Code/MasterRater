@@ -46,7 +46,7 @@ class ResultsPage(QWidget):
         self.nav.push(movie_details_page)
 
     def show_tv_details(self, tv_show):
-        show_id = tv_show.get('id')
-        detailed_show = self.api_manager.get_details(show_id, 'tv')
+        show_id = "tv:" + str(tv_show.get('id'))
+        detailed_show = self.api_manager.get_content_details(show_id)
         show_details_page = ShowDetailsPage(self.nav, self.api_manager, self.rating_manager, detailed_show)
         self.nav.push(show_details_page)
