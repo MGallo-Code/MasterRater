@@ -39,12 +39,12 @@ class ResultsPage(QWidget):
         self.setLayout(main_layout)
 
     def show_movie_details(self, movie):
-        from gui.MovieDetailsPage import MovieDetailsPage
+        from gui.MainContent.MovieDetailsPage import MovieDetailsPage
         movie_details_page = MovieDetailsPage(self.nav, self.api_manager, movie)
         self.nav.push(movie_details_page)
 
     def show_tv_details(self, tv_show):
-        from gui.ShowDetailsPage import ShowDetailsPage
+        from gui.MainContent.ShowDetailsPage import ShowDetailsPage
         show_id = tv_show.get('id')
         detailed_show = self.api_manager.get_details(show_id, 'tv')
         show_details_page = ShowDetailsPage(self.nav, self.api_manager, detailed_show)

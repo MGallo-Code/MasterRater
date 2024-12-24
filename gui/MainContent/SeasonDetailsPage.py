@@ -1,7 +1,7 @@
 # gui/SeasonDetailsPage.py
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea, QSizePolicy, QFrame
 from PySide6.QtCore import Qt
-from gui.EpisodeDetailsPage import EpisodeDetailsPage
+from gui.MainContent.EpisodeDetailsPage import EpisodeDetailsPage
 
 class SeasonDetailsPage(QWidget):
     def __init__(self, navigation_controller, api_manager, show, season_details):
@@ -86,6 +86,12 @@ class SeasonDetailsPage(QWidget):
             scroll_area.setWidget(scroll_content)
             layout.addWidget(scroll_area)
 
+        rate_button = QPushButton("Rate this Season")
+        rate_button.clicked.connect(self.open_rating_dialog)
+        layout.addWidget(rate_button)
+
+        self.setLayout(layout)
+
         # Final Layout Setup
         layout.addStretch()  # Push content up for better alignment
         self.setLayout(layout)
@@ -98,3 +104,6 @@ class SeasonDetailsPage(QWidget):
         """Navigate to the EpisodeDetailsPage for the selected episode."""
         episode_page = EpisodeDetailsPage(self.nav, self.api_manager, self.show, episode)
         self.nav.push(episode_page)
+    
+    def open_rating_dialog(self):
+        print("Opening rating dialog...")

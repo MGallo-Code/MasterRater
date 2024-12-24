@@ -1,6 +1,6 @@
 # gui/NavigationController.py
 
-from PySide6.QtWidgets import QWidget, QStackedWidget
+from PySide6.QtWidgets import QWidget
 from PySide6.QtCore import Signal, QObject
 
 class NavigationController(QObject):

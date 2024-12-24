@@ -1,6 +1,6 @@
 # gui/ShowDetailsPage.py
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea, QSizePolicy
-from gui.SeasonDetailsPage import SeasonDetailsPage
+from gui.MainContent.SeasonDetailsPage import SeasonDetailsPage
 
 class ShowDetailsPage(QWidget):
     def __init__(self, navigation_controller, api_manager, show):
