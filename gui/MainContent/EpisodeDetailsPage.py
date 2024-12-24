@@ -1,4 +1,4 @@
-# gui/EpisodeDetailsPage.py
+# gui/MainContent/EpisodeDetailsPage.py
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea, QSizePolicy
 
 class EpisodeDetailsPage(QWidget):

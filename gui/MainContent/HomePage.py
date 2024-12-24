@@ -1,4 +1,4 @@
-# gui/HomePage.py
+# gui/MainContent/HomePage.py
 
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QPushButton
 

@@ -1,4 +1,4 @@
-# gui/ResultsPage.py
+# gui/MainContent/ResultsPage.py
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea
 
 class ResultsPage(QWidget):

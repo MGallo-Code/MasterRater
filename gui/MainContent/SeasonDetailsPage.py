@@ -1,4 +1,4 @@
-# gui/SeasonDetailsPage.py
+# gui/MainContent/SeasonDetailsPage.py
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QScrollArea, QSizePolicy, QFrame
 from PySide6.QtCore import Qt
 from gui.MainContent.EpisodeDetailsPage import EpisodeDetailsPage

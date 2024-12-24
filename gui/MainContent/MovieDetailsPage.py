@@ -1,4 +1,4 @@
-# gui/MovieDetailsPage.py
+# gui/MainContent/MovieDetailsPage.py
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSizePolicy
 
 class MovieDetailsPage(QWidget):
