@@ -6,7 +6,7 @@ from gui.MainContent.HomePage import HomePage
 from gui.MainContent.ResultsPage import ResultsPage
 from ratings.RatingManager import RatingManager
 from utils.APIManager import APIManager
-from utils.load_stylesheet import load_stylesheet
+from utils.helper_functions import load_stylesheet
 
 class MainWindow(QMainWindow):
     def __init__(self):
