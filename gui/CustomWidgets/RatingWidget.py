@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
-from gui.RatingWidgets.MixedRatingDialog import MixedRatingDialog
+from gui.CustomWidgets.MixedRatingDialog import MixedRatingDialog
 from ratings.MixedRatingStrategy import MixedRatingStrategy
 
 class RatingWidget(QWidget):

@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 from gui.MainContent.SeasonDetailsPage import SeasonDetailsPage
-from gui.RatingWidgets.RatingWidget import RatingWidget
+from gui.CustomWidgets.RatingWidget import RatingWidget
 
 class ShowDetailsPage(QWidget):
     def __init__(self, navigation_controller, api_manager, rating_manager, show):

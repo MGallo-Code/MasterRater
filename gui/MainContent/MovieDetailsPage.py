@@ -2,7 +2,7 @@
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QSizePolicy, QScrollArea
 from PySide6.QtCore import Qt
-from gui.RatingWidgets.RatingWidget import RatingWidget
+from gui.CustomWidgets.RatingWidget import RatingWidget
 
 class MovieDetailsPage(QWidget):
     def __init__(self, navigation_controller, api_manager, rating_manager, movie):
