@@ -1,12 +1,12 @@
 # gui/MainWindow.py
 from PySide6.QtWidgets import QMainWindow, QComboBox, QLineEdit, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QSizePolicy
 from PySide6.QtCore import Qt
-from gui.NavigationController import NavigationController
+from gui.CustomWidgets.NavigationController import NavigationController
 from gui.MainContent.HomePage import HomePage
 from gui.MainContent.ResultsPage import ResultsPage
 from ratings.RatingManager import RatingManager
 from utils.APIManager import APIManager
-from utils.helper_functions import load_stylesheet
+from gui.utils.load_stylesheet import load_stylesheet
 
 class MainWindow(QMainWindow):
     def __init__(self):
