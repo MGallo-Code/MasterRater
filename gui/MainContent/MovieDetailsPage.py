@@ -1,8 +1,9 @@
 # gui/MainContent/MovieDetailsPage.py
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QSizePolicy, QScrollArea
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QScrollArea
 from PySide6.QtCore import Qt
 from gui.CustomWidgets.RatingWidget import RatingWidget
+from gui.CustomWidgets.MediaHeaderWidget import MediaHeaderWidget
 
 class MovieDetailsPage(QWidget):
     def __init__(self, navigation_controller, api_manager, rating_manager, movie):
@@ -12,30 +13,32 @@ class MovieDetailsPage(QWidget):
         self.rating_manager = rating_manager
         self.movie = movie
 
-        layout = QVBoxLayout()
-        self.setLayout(layout)
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(0,0,0,0)
 
-        # Basic movie info
+        # Insert the custom media header up top
         title = movie.get('title', 'Unknown Title')
-        date = movie.get('release_date', 'Unknown Date')
-        overview = movie.get('overview', 'No overview available.')
-        global_rating = movie.get('vote_average', 'No rating available.')
+        backdrop = movie.get('backdrop_path')
+        poster = movie.get('poster_path')
 
-        title_label = QLabel(f"<h2>{title}</h2>")
-        title_label.setTextFormat(Qt.RichText)
-        layout.addWidget(title_label)
+        header_widget = MediaHeaderWidget(
+            parent=self,
+            title=title,
+            backdrop_path=backdrop,
+            poster_path=poster,
+        )
+        main_layout.addWidget(header_widget)
 
-        layout.addWidget(QLabel(f"Release Date: {date}"))
+        # Then you can add rating, overview, etc. beneath the header
+        rating_label = QLabel(f"TMDB Rating: {movie.get('vote_average', 'N/A')}")
+        main_layout.addWidget(rating_label)
 
-        # Overview
-        overview_label = QLabel(f"{overview}")
+        overview = movie.get('overview', 'No overview provided.')
+        overview_label = QLabel(overview)
         overview_label.setWordWrap(True)
-        overview_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        layout.addWidget(overview_label)
+        main_layout.addWidget(overview_label)
 
-        layout.addWidget(QLabel(f"TMDB Global Rating: {global_rating}"))
-
-        # Insert reusable rating widget
+        # If you want a rating widget, etc. add them here
         content_id = f"movie:{movie.get('id')}"
         rating_widget = RatingWidget(
             parent=self,
@@ -43,4 +46,6 @@ class MovieDetailsPage(QWidget):
             content_id=content_id,
             title_text="Rate this Movie"
         )
-        layout.addWidget(rating_widget)
+        main_layout.addWidget(rating_widget)
+
+        main_layout.addStretch()

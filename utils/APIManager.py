@@ -82,7 +82,7 @@ class APIManager:
         }
     
     def get_search(self, query, query_type="movie", page=1):
-        url = f"{self.base_url}search/{query_type}?query={quote(query)}&include_adult=true&language={self.language}&page={page}"
+        url = f"{self.base_url}search/{query_type}?query={quote(query)}&include_adult=false&language={self.language}&page={page}"
         return requests.get(url, headers=self.headers).json()['results']
     
     def get_content_details(self, content_id):
