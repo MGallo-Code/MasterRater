@@ -13,32 +13,46 @@ class MovieDetailsPage(QWidget):
         self.rating_manager = rating_manager
         self.movie = movie
 
-        main_layout = QVBoxLayout(self)
-        main_layout.setContentsMargins(0,0,0,0)
-
         # Insert the custom media header up top
         title = movie.get('title', 'Unknown Title')
         backdrop = movie.get('backdrop_path')
         poster = movie.get('poster_path')
 
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(0,0,0,0)
+
+        # Make main area scrollable to avoid resizing issues
+        scroll_area = QScrollArea(self)
+        scroll_area.setWidgetResizable(True)
+        main_layout.addWidget(scroll_area)
+
+        # Scrollable content widget
+        content_widget = QWidget()
+        scroll_area.setWidget(content_widget)
+        content_layout = QVBoxLayout(content_widget)
+        content_layout.setContentsMargins(0, 0, 0, 0)
+        content_layout.setSpacing(10)
+
+        # Create and add header widget with poster, backdrop, and title
         header_widget = MediaHeaderWidget(
             parent=self,
             title=title,
             backdrop_path=backdrop,
             poster_path=poster,
         )
-        main_layout.addWidget(header_widget)
+        content_layout.addWidget(header_widget)
 
-        # Then you can add rating, overview, etc. beneath the header
+        # Add metadata beneath the header
         rating_label = QLabel(f"TMDB Rating: {movie.get('vote_average', 'N/A')}")
-        main_layout.addWidget(rating_label)
+        content_layout.addWidget(rating_label)
 
+        # Add movie overview
         overview = movie.get('overview', 'No overview provided.')
         overview_label = QLabel(overview)
         overview_label.setWordWrap(True)
-        main_layout.addWidget(overview_label)
+        content_layout.addWidget(overview_label)
 
-        # If you want a rating widget, etc. add them here
+        # Add rating widget
         content_id = f"movie:{movie.get('id')}"
         rating_widget = RatingWidget(
             parent=self,
@@ -46,6 +60,4 @@ class MovieDetailsPage(QWidget):
             content_id=content_id,
             title_text="Rate this Movie"
         )
-        main_layout.addWidget(rating_widget)
-
-        main_layout.addStretch()
+        content_layout.addWidget(rating_widget)
