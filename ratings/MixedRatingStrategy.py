@@ -46,7 +46,7 @@ class MixedRatingStrategy(BaseRatingStrategy):
             if val is not None:
                 weighted_sum += val * weight
                 total_weight += weight
-        self.total_rating = weighted_sum / total_weight if total_weight > 0 else None
+        self.total_rating = round(weighted_sum / total_weight, 3) if total_weight > 0 else None
 
     def get_overall_rating(self):
         """Single rating (self.one_score) takes precedence; otherwise category-based average."""
